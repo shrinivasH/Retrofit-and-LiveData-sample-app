@@ -37,7 +37,5 @@ public class NetworkInteractor extends ResultReceiver {
         if (mReceiver != null) {
             mReceiver.onReceiveResult(resultCode, resultData);
         }
-        Log.d("mess","mess");
-        Log.d("mess","mess");
     }
 }
