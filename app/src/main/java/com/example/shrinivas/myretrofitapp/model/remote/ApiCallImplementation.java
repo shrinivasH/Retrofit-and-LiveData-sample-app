@@ -23,49 +23,45 @@ import retrofit2.Response;
 
 import static android.app.DownloadManager.STATUS_RUNNING;
 
-public class ApiCallImplementation extends IntentService{
+public class ApiCallImplementation extends IntentService {
     private ApiInterface apiInterface;
     private NetworkInteractor interactor;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     *
      */
     public ApiCallImplementation() {
         super(ApiCallImplementation.class.getName());
     }
 
 
-
-
-
-
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         this.apiInterface = ApiClient.getRetrofitClient().create(ApiInterface.class);
         Call<MovieResponse> call = apiInterface.getTopRatedMovies("b7cd3340a794e5a2f35e3abb820b497f");
-        final List<LocalMovie> movieResponses = new ArrayList<>();
+        final ArrayList<LocalMovie> movieResponses = new ArrayList<LocalMovie>();
         final ResultReceiver receiver = intent.getParcelableExtra("receiver");
         String command = intent.getStringExtra("command");
-       final Bundle b = new Bundle();
+        final Bundle b = new Bundle();
+        if (command.equals("query")) {
+            call.enqueue(new Callback<MovieResponse>() {
+                @Override
+                public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                    int statusCode = response.code();
+                    ArrayList<LocalMovie> movieResponsesTemp = response.body().getResults();
+                    movieResponses.addAll(movieResponsesTemp);
+                    b.putParcelableArrayList("results", movieResponses);
+                    receiver.send(Constants.STATUS_FINISHED, b);
+                    Log.d("mess", "mess");
+                }
 
-        call.enqueue(new Callback<MovieResponse>() {
-            @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                int statusCode = response.code();
-                ArrayList<LocalMovie> movieResponsesTemp = response.body().getResults();
-                movieResponses.addAll(movieResponsesTemp);
-
-
-            }
-            @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) {
-                Log.d("Error", t.toString());
-                b.putString(Intent.EXTRA_TEXT, t.toString());
-                receiver.send(Constants.STATUS_ERROR, b);
-            }
-        });
-
+                @Override
+                public void onFailure(Call<MovieResponse> call, Throwable t) {
+                    Log.d("Error", t.toString());
+                    b.putString(Intent.EXTRA_TEXT, t.toString());
+                    receiver.send(Constants.STATUS_ERROR, b);
+                }
+            });
+        }
     }
 }

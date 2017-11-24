@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.shrinivas.myretrofitapp.model.dto.Constants;
 import com.example.shrinivas.myretrofitapp.model.remote.ApiCallImplementation;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements NetworkInteractor
                 List results = resultData.getParcelableArrayList("results");
                 // do something interesting
                 // hide progress
+                Log.d("mess","mess");
+                Log.d("mess","mess");
                 break;
             case Constants.STATUS_ERROR:
                 // handle the error;

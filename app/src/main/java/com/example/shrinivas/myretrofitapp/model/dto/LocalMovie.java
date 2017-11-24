@@ -4,11 +4,13 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
 @Entity
-public class LocalMovie {
+public class LocalMovie implements Parcelable {
     @PrimaryKey
     @ColumnInfo(name = "movie_id")
     @SerializedName("id")
@@ -71,6 +73,34 @@ public class LocalMovie {
         this.overview = overview;
         this.release_date = release_date;
     }
+
+    protected LocalMovie(Parcel in) {
+        id = in.readInt();
+        vote_count = in.readInt();
+        video = in.readByte() != 0;
+        vote_average = in.readFloat();
+        title = in.readString();
+        popularity = in.readFloat();
+        poster_path = in.readString();
+        original_language = in.readString();
+        original_title = in.readString();
+        backdrop_path = in.readString();
+        adult = in.readByte() != 0;
+        overview = in.readString();
+        release_date = in.readString();
+    }
+
+    public static final Creator<LocalMovie> CREATOR = new Creator<LocalMovie>() {
+        @Override
+        public LocalMovie createFromParcel(Parcel in) {
+            return new LocalMovie(in);
+        }
+
+        @Override
+        public LocalMovie[] newArray(int size) {
+            return new LocalMovie[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -174,5 +204,27 @@ public class LocalMovie {
 
     public void setRelease_date(String release_date) {
         this.release_date = release_date;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(vote_count);
+        dest.writeByte((byte) (video ? 1 : 0));
+        dest.writeFloat(vote_average);
+        dest.writeString(title);
+        dest.writeFloat(popularity);
+        dest.writeString(poster_path);
+        dest.writeString(original_language);
+        dest.writeString(original_title);
+        dest.writeString(backdrop_path);
+        dest.writeByte((byte) (adult ? 1 : 0));
+        dest.writeString(overview);
+        dest.writeString(release_date);
     }
 }

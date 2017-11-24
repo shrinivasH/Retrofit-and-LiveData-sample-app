@@ -3,6 +3,7 @@ package com.example.shrinivas.myretrofitapp.model.remote;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.util.Log;
 
 import com.example.shrinivas.myretrofitapp.model.dto.LocalMovie;
 
@@ -36,5 +37,7 @@ public class NetworkInteractor extends ResultReceiver {
         if (mReceiver != null) {
             mReceiver.onReceiveResult(resultCode, resultData);
         }
+        Log.d("mess","mess");
+        Log.d("mess","mess");
     }
 }
