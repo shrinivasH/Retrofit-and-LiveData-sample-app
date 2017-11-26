@@ -6,11 +6,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
 import com.example.shrinivas.myretrofitapp.R;
 import com.example.shrinivas.myretrofitapp.model.dto.LocalMovie;
+import com.example.shrinivas.myretrofitapp.utils.RecyclerTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
 
     private ArrayList<LocalMovie> movies;
     private Context mContext;
+    private RecyclerTouchListener recyclerTouchListener;
 
     public MovieAdapter(Context mContext) {
         this.movies = new ArrayList<>();
@@ -33,11 +37,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
 
     @Override
     public void onBindViewHolder(MovieHolder holder, int position) {
-        LocalMovie movie = movies.get(position);
+        final LocalMovie movie = movies.get(position);
 
         holder.movieTitle.setText(movie.getTitle());
         holder.movieDate.setText(movie.getRelease_date());
         holder.movieCategory.setText("" + movie.isAdult());
+        holder.mArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerTouchListener.onItemClick(movie);
+            }
+        });
     }
 
     @Override
@@ -50,12 +60,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
         TextView movieTitle;
         TextView movieDate;
         TextView movieCategory;
+        ImageView mArrow;
 
         public MovieHolder(View itemView) {
             super(itemView);
             movieTitle = (TextView) itemView.findViewById(R.id.movieName);
             movieDate = (TextView) itemView.findViewById(R.id.releasedate);
             movieCategory = (TextView) itemView.findViewById(R.id.movieCategory);
+            mArrow = (ImageView) itemView.findViewById(R.id.mArrowNext);
 
         }
     }
@@ -63,5 +75,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     public void setUserList(List<LocalMovie> localMovies) {
         this.movies.clear();
         this.movies.addAll(localMovies);
+    }
+
+    public void setOnClickList(RecyclerTouchListener recyclerTouchListener) {
+        this.recyclerTouchListener = recyclerTouchListener;
     }
 }

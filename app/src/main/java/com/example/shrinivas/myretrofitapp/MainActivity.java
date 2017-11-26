@@ -7,35 +7,47 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.example.shrinivas.myretrofitapp.adapters.MovieAdapter;
 import com.example.shrinivas.myretrofitapp.model.dto.Constants;
 import com.example.shrinivas.myretrofitapp.model.dto.LocalMovie;
 import com.example.shrinivas.myretrofitapp.model.remote.ApiCallImplementation;
 import com.example.shrinivas.myretrofitapp.model.remote.NetworkInteractor;
+import com.example.shrinivas.myretrofitapp.utils.RecyclerTouchListener;
+import com.example.shrinivas.myretrofitapp.view.MovieDetailsActivity;
 import com.example.shrinivas.myretrofitapp.viewModel.MovieViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NetworkInteractor.Receiver {
+public class MainActivity extends AppCompatActivity implements NetworkInteractor.Receiver, RecyclerTouchListener {
 
     public NetworkInteractor mReceiver;
     private MovieViewModel movieViewModel;
     private RecyclerView mRecyclerView;
     private MovieAdapter movieAdapter;
+    private DividerItemDecoration mDividerItemDecoration;
+    private LinearLayoutManager linearLayoutManager;
+    private RecyclerTouchListener recyclerTouchListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mRecyclerView = (RecyclerView) findViewById(R.id.movieRecycler);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        linearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mDividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(), linearLayoutManager.getOrientation());
+        mRecyclerView.addItemDecoration(mDividerItemDecoration);
         movieAdapter = new MovieAdapter(getApplicationContext());
         mRecyclerView.setAdapter(movieAdapter);
+        movieAdapter.setOnClickList(this);
         mReceiver = new NetworkInteractor(new Handler());
         mReceiver.setReceiver(this);
         final Intent intent = new Intent(getApplicationContext(), ApiCallImplementation.class);
@@ -51,9 +63,9 @@ public class MainActivity extends AppCompatActivity implements NetworkInteractor
                 } else {
                     setRecyclerView(localMovies);
                 }
-
             }
         });
+
     }
 
     @Override
@@ -86,5 +98,14 @@ public class MainActivity extends AppCompatActivity implements NetworkInteractor
         movieAdapter.setUserList(recycleList);
         movieAdapter.notifyDataSetChanged();
 
+    }
+
+    @Override
+    public void onItemClick(LocalMovie movie) {
+
+        LocalMovie localMovie = movie;
+        Intent intent = new Intent(this, MovieDetailsActivity.class);
+        intent.putExtra("Movie", localMovie);
+        startActivity(intent);
     }
 }
