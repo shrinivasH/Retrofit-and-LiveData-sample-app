@@ -41,7 +41,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
 
         holder.movieTitle.setText(movie.getTitle());
         holder.movieDate.setText(movie.getRelease_date());
-        holder.movieCategory.setText("" + movie.isAdult());
+        boolean adult=movie.isAdult();
+        holder.movieCategory.setText("" + (adult ? "(A)":"(U)"));
         holder.mArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
